@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+
+spring:
+  application:
+    name: eventsourcing
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eventsourcing
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    database: postgresql
+
+axon:
+  serializer:
+    general: xstream
+  kafka:
+    client-id: account
+    default-topic: account_topic
+    bootstrap-servers: 127.0.0.1:9092
+
+    producer:
+      retries: 5
+      transaction-id-prefix: clxtrx
+
+  axonserver:
+    enabled: false
