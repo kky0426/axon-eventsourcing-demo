@@ -1,6 +1,7 @@
 package com.example.eventsourcing.command.aggregate;
 
 import com.example.eventsourcing.command.command.OrderCreateCommand;
+import com.example.eventsourcing.common.event.BaseEvent;
 import com.example.eventsourcing.common.event.OrderCreatedEvent;
 import com.example.eventsourcing.common.event.ProductSubStockEvent;
 import com.example.eventsourcing.query.model.Product;
@@ -11,10 +12,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.eventhandling.EventMessage;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+
+import java.util.function.Supplier;
 
 @Aggregate
 @Getter
@@ -44,8 +48,8 @@ public class OrderAggregate {
                 .id(command.getProductId())
                 .stock(command.getCount())
                 .build();
-        AggregateLifecycle.apply(orderCreatedEvent);
-        AggregateLifecycle.apply(productSubStockEvent);
+        AggregateLifecycle.apply(orderCreatedEvent)
+                .andThenApply(()-> productSubStockEvent);
     }
 
     @EventSourcingHandler
